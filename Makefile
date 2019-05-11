@@ -50,6 +50,7 @@ BUILD_DIR = build
 C_SOURCES =  \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c \
 Src/main.c \
+app/app.c \
 Src/stm32f1xx_hal_msp.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c \
 Src/stm32f1xx_it.c \

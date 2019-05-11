@@ -1,7 +1,9 @@
 #include "main.h"
 #include "stm32f1xx_hal.h"
+#include "cmsis_os.h"
 
 #include <stdbool.h>
+#include <stdio.h>
 
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
@@ -73,6 +75,11 @@ IoLine BOARD_PINS[] = {
 
 
 void app() {
+    printf("=== Endpoint ++ ===\n");
+    // char buffer[] = "hi\n";
+
+    // HAL_UART_Transmit(&huart2, (uint8_t*)buffer, (uint16_t)4, HAL_MAX_DELAY);
+
     for(size_t i = 1; i < sizeof(BOARD_PINS)/sizeof(BOARD_PINS[0]); i++) {
         app_gpio_init(BOARD_PINS[i].gpio, GpioModeOutput);
     }
@@ -80,12 +87,12 @@ void app() {
     while(1) {
         for(size_t i = 1; i < sizeof(BOARD_PINS)/sizeof(BOARD_PINS[0]); i++) {
             app_gpio_write(BOARD_PINS[i].gpio, true);
-            HAL_Delay(50);
+            osDelay(30);
         }
 
         for(size_t i = 1; i < sizeof(BOARD_PINS)/sizeof(BOARD_PINS[0]); i++) {
             app_gpio_write(BOARD_PINS[i].gpio, false);
-            HAL_Delay(50);
+            osDelay(30);
         }
     }
 }

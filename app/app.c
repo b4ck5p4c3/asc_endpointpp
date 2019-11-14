@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 extern UART_HandleTypeDef huart1;
 
@@ -75,6 +76,9 @@ IoLine BOARD_PINS[] = {
 
 void app() {
     printf("=== Endpoint ++ ===\n");
+
+    uint8_t buffer[] = "test\n";
+    HAL_UART_Transmit(&huart1, (uint8_t*)buffer, (uint16_t)strlen((char*)buffer), HAL_MAX_DELAY);
 
     for(size_t i = 1; i < sizeof(BOARD_PINS)/sizeof(BOARD_PINS[0]); i++) {
         app_gpio_init(BOARD_PINS[i].gpio, GpioModeOutput);

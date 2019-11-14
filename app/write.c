@@ -25,7 +25,7 @@
 #include "stm32f1xx_hal.h"
 #include "cmsis_os.h"
 
-extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart3;
 
 
 /*
@@ -44,7 +44,7 @@ size_t _write(int handle, const unsigned char * buffer, size_t size) {
         return 0;
     }
     
-    HAL_UART_Transmit(&huart2, (uint8_t*)buffer, (uint16_t)size, HAL_MAX_DELAY);
+    HAL_UART_Transmit(&huart3, (uint8_t*)buffer, (uint16_t)size, HAL_MAX_DELAY);
 
     return (int)size;
 }

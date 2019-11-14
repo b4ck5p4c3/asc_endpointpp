@@ -28,27 +28,31 @@ typedef struct {
 } IoLine;
 
 void app_gpio_init(GpioPin gpio, GpioMode mode) {
-    GPIO_InitTypeDef GPIO_InitStruct;
+    if(gpio.pin != 0) {
+        GPIO_InitTypeDef GPIO_InitStruct;
 
-    GPIO_InitStruct.Pin = gpio.pin;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Pin = gpio.pin;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
 
-    switch(mode) {
-        case GpioModeInput:
-            GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-        break;
+        switch(mode) {
+            case GpioModeInput:
+                GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+            break;
 
-        case GpioModeOutput: 
-            GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-            GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
-        break;
+            case GpioModeOutput: 
+                GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+                GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+            break;
+        }
+
+        HAL_GPIO_Init(gpio.port, &GPIO_InitStruct);
     }
-
-    HAL_GPIO_Init(gpio.port, &GPIO_InitStruct);
 }
 
 void app_gpio_write(GpioPin gpio, bool state) {
-    HAL_GPIO_WritePin(gpio.port, gpio.pin, state ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    if(gpio.pin != 0) {
+        HAL_GPIO_WritePin(gpio.port, gpio.pin, state ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    }
 }
 
 IoLine BOARD_PINS[] = {
@@ -66,7 +70,7 @@ IoLine BOARD_PINS[] = {
     {.gpio = {.port = GPIOB, .pin = GPIO_PIN_3}, .pull = {.port = GPIOB, .pin = GPIO_PIN_4}},
 
     {.gpio = {.port = GPIOC, .pin = GPIO_PIN_12}, .pull = {.port = GPIOD, .pin = GPIO_PIN_2}},
-    {.gpio = {.port = GPIOC, .pin = GPIO_PIN_10}, .pull = {.port = GPIOC, .pin = GPIO_PIN_11}},
+    {.gpio = {.pin = 0, .port = (GPIO_TypeDef*)0}, .pull = {.pin = 0, .port = (GPIO_TypeDef*)0}},
     {.gpio = {.port = GPIOA, .pin = GPIO_PIN_11}, .pull = {.port = GPIOA, .pin = GPIO_PIN_15}},
     {.gpio = {.port = GPIOC, .pin = GPIO_PIN_9}, .pull = {.port = GPIOA, .pin = GPIO_PIN_8}},
 
@@ -76,15 +80,27 @@ IoLine BOARD_PINS[] = {
     {.gpio = {.port = GPIOB, .pin = GPIO_PIN_1}, .pull = {.port = GPIOB, .pin = GPIO_PIN_12}},
 };
 
-osThreadId modbusTaskHandle;
-void modbus_task(void const * argument);
+osThreadId ledTaskHandle;
+void led_task(void const * argument);
 
 void app() {
-    osThreadDef(modbusTask, modbus_task, osPriorityNormal, 0, 256);
-    modbusTaskHandle = osThreadCreate(osThread(modbusTask), NULL);
+    printf("=== Endpoint ASC B4CKSP4CE ===\n");
 
+    osThreadDef(ledTask, led_task, osPriorityNormal, 0, 128);
+    ledTaskHandle = osThreadCreate(osThread(ledTask), NULL);
 
-    printf("=== Endpoint ++ ===\n");
+    modbus_init();
+
+    while(1) {
+        printf("test!\n");
+
+        // modbus_poll();
+
+        osDelay(1000);
+    }
+}
+
+void led_task(void const* argument) {
 
     for(size_t i = 1; i < sizeof(BOARD_PINS)/sizeof(BOARD_PINS[0]); i++) {
         app_gpio_init(BOARD_PINS[i].gpio, GpioModeOutput);
@@ -100,16 +116,5 @@ void app() {
             app_gpio_write(BOARD_PINS[i].gpio, false);
             osDelay(30);
         }
-    }
-}
-
-void modbus_task(void const * argument) {
-    modbus_init();
-
-    while(1) {
-        printf(".");
-
-        modbus_poll();
-        osDelay(100);
     }
 }

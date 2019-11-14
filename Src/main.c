@@ -129,6 +129,7 @@ int main(void)
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
+
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 

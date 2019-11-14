@@ -128,6 +128,7 @@ eMBRTUStart( void )
      * to STATE_RX_IDLE. This makes sure that we delay startup of the
      * modbus protocol stack until the bus is free.
      */
+
     eRcvState = STATE_RX_INIT;
     vMBPortSerialEnable( TRUE, FALSE );
     vMBPortTimersEnable(  );

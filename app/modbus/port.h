@@ -24,13 +24,14 @@
 
 #include "stm32f1xx_hal.h"
 #include <inttypes.h>
+#include "cmsis_os.h"
 
 #define	INLINE                      inline
 #define PR_BEGIN_EXTERN_C           extern "C" {
 #define	PR_END_EXTERN_C             }
 
-#define ENTER_CRITICAL_SECTION( )	__disable_irq()
-#define EXIT_CRITICAL_SECTION( )	__enable_irq()
+#define ENTER_CRITICAL_SECTION()	taskENTER_CRITICAL()
+#define EXIT_CRITICAL_SECTION()	taskEXIT_CRITICAL()
 
 
 #define assert(val) assert_param(val)

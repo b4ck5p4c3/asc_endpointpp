@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "modbus.h"
+#include "registers.h"
+
 extern UART_HandleTypeDef huart1;
 
 // pin init helper
@@ -73,12 +76,15 @@ IoLine BOARD_PINS[] = {
     {.gpio = {.port = GPIOB, .pin = GPIO_PIN_1}, .pull = {.port = GPIOB, .pin = GPIO_PIN_12}},
 };
 
+osThreadId modbusTaskHandle;
+void modbus_task(void const * argument);
 
 void app() {
-    printf("=== Endpoint ++ ===\n");
+    osThreadDef(modbusTask, modbus_task, osPriorityNormal, 0, 256);
+    modbusTaskHandle = osThreadCreate(osThread(modbusTask), NULL);
 
-    uint8_t buffer[] = "test\n";
-    HAL_UART_Transmit(&huart1, (uint8_t*)buffer, (uint16_t)strlen((char*)buffer), HAL_MAX_DELAY);
+
+    printf("=== Endpoint ++ ===\n");
 
     for(size_t i = 1; i < sizeof(BOARD_PINS)/sizeof(BOARD_PINS[0]); i++) {
         app_gpio_init(BOARD_PINS[i].gpio, GpioModeOutput);
@@ -94,5 +100,16 @@ void app() {
             app_gpio_write(BOARD_PINS[i].gpio, false);
             osDelay(30);
         }
+    }
+}
+
+void modbus_task(void const * argument) {
+    modbus_init();
+
+    while(1) {
+        printf(".");
+
+        modbus_poll();
+        osDelay(100);
     }
 }

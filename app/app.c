@@ -93,8 +93,7 @@ void app() {
 
     while(1) {
         printf("test!\n");
-
-        // modbus_poll();
+        modbus_poll();
 
         osDelay(1000);
     }

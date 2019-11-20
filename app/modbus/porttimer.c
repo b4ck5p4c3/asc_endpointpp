@@ -8,7 +8,6 @@ static uint16_t downcounter = 0;
 
 BOOL
 xMBPortTimersInit(USHORT usTim1Timerout50us) {
-	/*
 	htim4.Instance               = MODBUS_TIMER;
 	htim4.Init.Prescaler         = (HAL_RCC_GetPCLK1Freq() / 1000000) - 1;
 	htim4.Init.CounterMode       = TIM_COUNTERMODE_UP;
@@ -21,9 +20,8 @@ xMBPortTimersInit(USHORT usTim1Timerout50us) {
 		return FALSE;
 	}
 
-	HAL_NVIC_SetPriority(TIM14_IRQn, 0, 0);
-	HAL_NVIC_EnableIRQ(TIM14_IRQn);
-	*/
+	HAL_NVIC_SetPriority(TIM4_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(TIM4_IRQn);
 
 	return TRUE;
 }

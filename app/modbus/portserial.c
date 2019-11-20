@@ -46,6 +46,9 @@ xMBPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eP
 
 void
 vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable) {
+	if(xRxEnable) {
+
+	}
 	/*
 	if (xRxEnable && !xTxEnable) {
 		while (!__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TXE));

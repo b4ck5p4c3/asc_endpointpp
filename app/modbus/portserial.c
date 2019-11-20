@@ -47,7 +47,7 @@ xMBPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eP
 void
 vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable) {
     if(xRxEnable) {
-        
+
     }
     /*
     if (xRxEnable && !xTxEnable) {
@@ -87,9 +87,8 @@ xMBPortSerialGetByte( CHAR * pucByte ) {
     return TRUE;
 }
 
-
+/*
 void USART1_IRQHandler(void) {
-    /*
     if((__HAL_UART_GET_IT(&huart1, UART_IT_RXNE) != RESET) && (__HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_RXNE) != RESET)) {
         pxMBFrameCBByteReceived();
         __HAL_UART_SEND_REQ(&huart1, UART_RXDATA_FLUSH_REQUEST);
@@ -99,7 +98,7 @@ void USART1_IRQHandler(void) {
         pxMBFrameCBTransmitterEmpty();
         return;
     }
-    */
 
     HAL_UART_IRQHandler(&huart1);
 }
+*/

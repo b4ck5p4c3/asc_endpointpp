@@ -6,7 +6,6 @@ static unsigned short usRegCoilStart = REG_COIL_START;
 static unsigned char  usRegCoilBuf[REG_COIL_NREGS];
 
 static unsigned short usRegDiscreteStart = REG_DISCRETE_START;
-static unsigned char  usRegDiscreteBuf[REG_DISCRETE_NREGS];
 
 static unsigned short usRegHoldingStart = REG_HOLDING_START;
 static unsigned short usRegHoldingBuf[REG_HOLDING_NREGS];
@@ -31,6 +30,7 @@ void registers_set_gas(uint32_t gas) {
 }
 
 void set_coil(uint8_t index, uint8_t state);
+uint8_t get_discrete(uint8_t index);
 
 eMBErrorCode eMBRegCoilsCB(UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode ) {
     eMBErrorCode    eStatus = MB_ENOERR;
@@ -50,7 +50,7 @@ eMBErrorCode eMBRegCoilsCB(UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoi
         	}
 
             set_coil(iRegIndex, usRegCoilBuf[iRegIndex]);
-            
+
             iRegIndex++;
             usNCoils--;
         }
@@ -73,7 +73,7 @@ eMBErrorCode eMBRegDiscreteCB(UCHAR * pucRegBuffer, USHORT usAddress, USHORT usN
         iRegIndex = (int)(usAddress - usRegDiscreteStart);
         while	(usNDiscrete > 0)
         {
-            *pucRegBuffer++ = (unsigned char)(usRegDiscreteBuf[iRegIndex]);
+            *pucRegBuffer++ = (unsigned char)get_discrete(iRegIndex);
             iRegIndex++;
             usNDiscrete--;
         }

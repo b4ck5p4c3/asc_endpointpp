@@ -55,6 +55,10 @@ void app_gpio_write(GpioPin gpio, bool state) {
     }
 }
 
+bool app_gpio_read(GpioPin gpio) {
+    return (HAL_GPIO_ReadPin(gpio.port, gpio.pin) == GPIO_PIN_SET);
+}
+
 #define GPIO_SIZE 16
 
 IoLine BOARD_PINS[GPIO_SIZE + 1] = {
@@ -94,6 +98,40 @@ void set_coil(uint8_t index, uint8_t state) {
         printf("write %d to %d\n", (index - GPIO_SIZE) + 1, state);
         app_gpio_write(BOARD_PINS[(index - GPIO_SIZE) + 1].gpio, state == 1);
     }
+
+    if(index >= GPIO_SIZE * 2 && index < GPIO_SIZE * 3) {
+        printf("pull %d to %d\n", (index - GPIO_SIZE * 2) + 1, state);
+        app_gpio_write(BOARD_PINS[(index - GPIO_SIZE) + 1].pull, state == 1);
+    }
+}
+
+static bool lock_en[GPIO_SIZE] = {false};
+static bool lock_dis[GPIO_SIZE] = {false};
+
+uint8_t get_discrete(uint8_t index) {
+    if(index < GPIO_SIZE) {
+        lock_en[index] = app_gpio_read(BOARD_PINS[index + 1].gpio);
+
+        return lock_en[index] ? 1 : 0;
+    }
+
+    if(index >= GPIO_SIZE && index < GPIO_SIZE * 2) {
+        lock_dis[index - GPIO_SIZE] = app_gpio_read(BOARD_PINS[(index - GPIO_SIZE) + 1].gpio);
+
+        return lock_dis[index - GPIO_SIZE] ? 1 : 0;
+    }
+
+    return 0;
+}
+
+void poll_inputs() {
+    for(size_t i = 0; i < GPIO_SIZE; i++) {
+        if(app_gpio_read(BOARD_PINS[i + 1].gpio)) {
+            lock_en[i] = true;
+        } else {
+            lock_dis[i] = false;
+        }
+    }
 }
 
 osThreadId ledTaskHandle;
@@ -112,6 +150,8 @@ void app() {
     while(1) {
         HAL_GPIO_TogglePin(LED_1_GPIO_Port, LED_1_Pin);
         modbus_poll();
+        poll_inputs();
+
         osDelay(1);
     }
 }

@@ -367,7 +367,7 @@ eMBPoll( void )
                     printf("0x%x ", ucMBFrame[i]);
                 }
                 printf("\n");
-            
+
                 /* Check if the frame is for us. If not ignore the frame. */
                 if( ( ucRcvAddress == ucMBAddress ) || ( ucRcvAddress == MB_ADDRESS_BROADCAST ) )
                 {
@@ -377,6 +377,7 @@ eMBPoll( void )
             break;
 
         case EV_EXECUTE:
+            printf("get execute message\n");
             ucFunctionCode = ucMBFrame[MB_PDU_FUNC_OFF];
             eException = MB_EX_ILLEGAL_FUNCTION;
             for( i = 0; i < MB_FUNC_HANDLERS_MAX; i++ )
@@ -410,6 +411,7 @@ eMBPoll( void )
                 }                
                 eStatus = peMBFrameSendCur( ucMBAddress, ucMBFrame, usLength );
             }
+            printf("sent\n");
             break;
 
         case EV_FRAME_SENT:

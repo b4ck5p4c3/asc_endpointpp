@@ -94,6 +94,7 @@ void app() {
     modbus_init();
 
     while(1) {
+        HAL_GPIO_TogglePin(LED_1_GPIO_Port, LED_1_Pin);
         modbus_poll();
         osDelay(1);
     }
@@ -102,6 +103,7 @@ void app() {
 extern uint32_t test_var;
 
 void led_task(void const* argument) {
+    int32_t temp = 0;
 
     for(size_t i = 1; i < sizeof(BOARD_PINS)/sizeof(BOARD_PINS[0]); i++) {
         app_gpio_init(BOARD_PINS[i].gpio, GpioModeOutput);
@@ -110,13 +112,15 @@ void led_task(void const* argument) {
     while(1) {
         for(size_t i = 1; i < sizeof(BOARD_PINS)/sizeof(BOARD_PINS[0]); i++) {
             app_gpio_write(BOARD_PINS[i].gpio, true);
-            osDelay(30);
+            osDelay(10);
         }
 
         for(size_t i = 1; i < sizeof(BOARD_PINS)/sizeof(BOARD_PINS[0]); i++) {
             app_gpio_write(BOARD_PINS[i].gpio, false);
-            osDelay(30);
+            osDelay(10);
         }
+
+        registers_set_temperature(temp++);
 
         // printf("test: %d\n", test_var);
 

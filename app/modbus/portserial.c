@@ -67,7 +67,7 @@ vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable) {
     }
 
     if (xTxEnable && !xRxEnable) {
-        // __HAL_UART_DISABLE_IT(&huart1, UAvMBPortSerialEnable(0, 1);RT_IT_RXNE);
+        // __HAL_UART_DISABLE_IT(&huart1, RT_IT_RXNE);
         HAL_GPIO_WritePin(MODBUS_DE_PORT, MODBUS_DE_PIN, GPIO_PIN_SET);
         // __HAL_UART_ENABLE_IT(&huart1, UART_IT_TXE);
     }
@@ -85,7 +85,6 @@ vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable) {
 
 BOOL
 xMBPortSerialPutByte( CHAR ucByte ) {
-    test_var += 3;
     uint8_t buffer[] = {(uint8_t)ucByte};
     HAL_UART_Transmit_IT(&huart1, buffer, 1);
 
@@ -116,7 +115,7 @@ void USART1_IRQHandler(void) {
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
     if (huart == &huart1) {
-        // printf("%02X", receive_buf[0]);
+        printf("%02X", receive_buf[0]);
         HAL_UART_Receive_IT(&huart1, receive_buf, 1);
         pxMBFrameCBByteReceived();
     }

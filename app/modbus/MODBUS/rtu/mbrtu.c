@@ -107,7 +107,7 @@ eMBRTUInit( UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eMBParity ePar
              * The reload for t3.5 is 1.5 times this value and similary
              * for t3.5.
              */
-            usTimerT35_50us = ( 100UL * 220000UL ) / ( 2UL * ulBaudRate );
+            usTimerT35_50us = ( 7UL * 220000UL ) / ( 2UL * ulBaudRate );
         }
         if( xMBPortTimersInit( ( USHORT ) usTimerT35_50us ) != TRUE )
         {
@@ -193,6 +193,7 @@ eMBRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength )
      */
     if( eRcvState == STATE_RX_IDLE )
     {
+
         /* First byte before the Modbus-PDU is the slave address. */
         pucSndBufferCur = ( UCHAR * ) pucFrame - 1;
         usSndBufferCount = 1;
@@ -209,6 +210,7 @@ eMBRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength )
         /* Activate the transmitter. */
         eSndState = STATE_TX_XMIT;
         vMBPortSerialEnable( FALSE, TRUE );
+        pxMBFrameCBTransmitterEmpty();
     }
     else
     {

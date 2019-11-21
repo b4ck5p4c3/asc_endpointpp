@@ -115,7 +115,7 @@ void USART1_IRQHandler(void) {
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
     if (huart == &huart1) {
-        printf("%02X", receive_buf[0]);
+        // printf("%02X", receive_buf[0]);
         HAL_UART_Receive_IT(&huart1, receive_buf, 1);
         pxMBFrameCBByteReceived();
     }

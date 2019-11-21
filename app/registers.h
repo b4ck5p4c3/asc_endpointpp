@@ -2,7 +2,7 @@
 #define REGISTERS_H_
 
 #define REG_COIL_START				0x000
-#define REG_COIL_NREGS				10
+#define REG_COIL_NREGS				32
 
 #define REG_DISCRETE_START			0x100
 #define REG_DISCRETE_NREGS			10

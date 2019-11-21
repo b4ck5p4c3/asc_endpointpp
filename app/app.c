@@ -55,7 +55,9 @@ void app_gpio_write(GpioPin gpio, bool state) {
     }
 }
 
-IoLine BOARD_PINS[] = {
+#define GPIO_SIZE 16
+
+IoLine BOARD_PINS[GPIO_SIZE + 1] = {
     // dummy IO0
     {.gpio = {.pin = 0, .port = (GPIO_TypeDef*)0}, .pull = {.pin = 0, .port = (GPIO_TypeDef*)0}},
 
@@ -80,6 +82,20 @@ IoLine BOARD_PINS[] = {
     {.gpio = {.port = GPIOB, .pin = GPIO_PIN_1}, .pull = {.port = GPIOB, .pin = GPIO_PIN_12}},
 };
 
+void set_coil(uint8_t index, uint8_t state) {
+    printf("set coil %d to %d\n", index, state);
+
+    if(index < GPIO_SIZE) {
+        printf("set mode %d to %d\n", index + 1, state);
+        app_gpio_init(BOARD_PINS[index + 1].gpio, state == 1 ? GpioModeOutput : GpioModeInput);
+    }
+
+    if(index >= GPIO_SIZE && index < GPIO_SIZE * 2) {
+        printf("write %d to %d\n", (index - GPIO_SIZE) + 1, state);
+        app_gpio_write(BOARD_PINS[(index - GPIO_SIZE) + 1].gpio, state == 1);
+    }
+}
+
 osThreadId ledTaskHandle;
 void led_task(void const * argument);
 
@@ -88,8 +104,8 @@ extern uint8_t receive_buf[1];
 void app() {
     printf("=== Endpoint ASC B4CKSP4CE ===\n");
 
-    osThreadDef(ledTask, led_task, osPriorityNormal, 0, 128);
-    ledTaskHandle = osThreadCreate(osThread(ledTask), NULL);
+    // osThreadDef(ledTask, led_task, osPriorityNormal, 0, 128);
+    // ledTaskHandle = osThreadCreate(osThread(ledTask), NULL);
 
     modbus_init();
 

@@ -30,6 +30,7 @@ void registers_set_gas(uint32_t gas) {
 	memcpy(&usRegInputBuf[REF_INPUT_GAS], &gas, 4);
 }
 
+void set_coil(uint8_t index, uint8_t state);
 
 eMBErrorCode eMBRegCoilsCB(UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode ) {
     eMBErrorCode    eStatus = MB_ENOERR;
@@ -48,6 +49,8 @@ eMBErrorCode eMBRegCoilsCB(UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoi
         		usRegCoilBuf[iRegIndex] = *pucRegBuffer++;
         	}
 
+            set_coil(iRegIndex, usRegCoilBuf[iRegIndex]);
+            
             iRegIndex++;
             usNCoils--;
         }

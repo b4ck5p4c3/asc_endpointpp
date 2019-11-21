@@ -2,7 +2,10 @@
 #include <mbport.h>
 #include <periph.h>
 
-static UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart1;
+uint8_t receive_buf[1];
+
+uint32_t test_var = 0;
 
 BOOL
 xMBPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity) {
@@ -46,25 +49,30 @@ xMBPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eP
 
 void
 vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable) {
+    // test_var = 1;
     if(xRxEnable) {
-
+        // test_var += 2;
+        HAL_UART_Receive_IT(&huart1, receive_buf, 1);
     }
-    /*
+
     if (xRxEnable && !xTxEnable) {
+        /*
         while (!__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TXE));
         __HAL_UART_DISABLE_IT(&huart1, UART_IT_TXE);
         while (!__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC));
 
         __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
+        */
         HAL_GPIO_WritePin(MODBUS_DE_PORT, MODBUS_DE_PIN, GPIO_PIN_RESET);
     }
 
     if (xTxEnable && !xRxEnable) {
-        __HAL_UART_DISABLE_IT(&huart1, UART_IT_RXNE);
+        // __HAL_UART_DISABLE_IT(&huart1, UAvMBPortSerialEnable(0, 1);RT_IT_RXNE);
         HAL_GPIO_WritePin(MODBUS_DE_PORT, MODBUS_DE_PIN, GPIO_PIN_SET);
-        __HAL_UART_ENABLE_IT(&huart1, UART_IT_TXE);
+        // __HAL_UART_ENABLE_IT(&huart1, UART_IT_TXE);
     }
 
+    /*
     if (!xRxEnable && !xTxEnable) {
         while (!__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TXE));
         __HAL_UART_DISABLE_IT(&huart1, UART_IT_TXE);
@@ -77,13 +85,16 @@ vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable) {
 
 BOOL
 xMBPortSerialPutByte( CHAR ucByte ) {
-    huart1.Instance->DR = ucByte;
+    test_var += 3;
+    uint8_t buffer[] = {(uint8_t)ucByte};
+    HAL_UART_Transmit_IT(&huart1, buffer, 1);
+
     return TRUE;
 }
 
 BOOL
 xMBPortSerialGetByte( CHAR * pucByte ) {
-    *pucByte = huart1.Instance->DR;
+    *pucByte = (CHAR) receive_buf[0];
     return TRUE;
 }
 
@@ -102,3 +113,22 @@ void USART1_IRQHandler(void) {
     HAL_UART_IRQHandler(&huart1);
 }
 */
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
+    if (huart == &huart1) {
+        // printf("%02X", receive_buf[0]);
+        HAL_UART_Receive_IT(&huart1, receive_buf, 1);
+        pxMBFrameCBByteReceived();
+    }
+}
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef* huart) {
+
+}
+
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef* huart) {
+    if (huart == &huart1) {
+        pxMBFrameCBTransmitterEmpty();
+    }
+}

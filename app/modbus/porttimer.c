@@ -20,7 +20,7 @@ xMBPortTimersInit(USHORT usTim1Timerout50us) {
 		return FALSE;
 	}
 
-	HAL_NVIC_SetPriority(TIM4_IRQn, 0, 0);
+	HAL_NVIC_SetPriority(TIM4_IRQn, 5, 0);
 	HAL_NVIC_EnableIRQ(TIM4_IRQn);
 
 	return TRUE;
@@ -38,16 +38,19 @@ vMBPortTimersDisable() {
 	HAL_TIM_Base_Stop_IT(&htim4);
 }
 
+extern uint32_t test_var;
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	if (htim->Instance != MODBUS_TIMER) {
 		return;
 	}
 
 	if (!--downcounter) {
+		test_var++;
 		pxMBPortCBTimerExpired();
 	}
 }
 
-void TIM14_IRQHandler(void) {
+void TIM4_IRQHandler(void) {
 	HAL_TIM_IRQHandler(&htim4);
 }

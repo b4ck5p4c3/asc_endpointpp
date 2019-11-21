@@ -83,6 +83,8 @@ IoLine BOARD_PINS[] = {
 osThreadId ledTaskHandle;
 void led_task(void const * argument);
 
+extern uint8_t receive_buf[1];
+
 void app() {
     printf("=== Endpoint ASC B4CKSP4CE ===\n");
 
@@ -92,12 +94,12 @@ void app() {
     modbus_init();
 
     while(1) {
-        printf("test!\n");
         modbus_poll();
-
-        osDelay(1000);
+        osDelay(1);
     }
 }
+
+extern uint32_t test_var;
 
 void led_task(void const* argument) {
 
@@ -115,5 +117,14 @@ void led_task(void const* argument) {
             app_gpio_write(BOARD_PINS[i].gpio, false);
             osDelay(30);
         }
+
+        // printf("test: %d\n", test_var);
+
+        /*
+        vMBPortSerialEnable(0, 1);
+        xMBPortSerialPutByte('a');
+        osDelay(2);
+        vMBPortSerialEnable(1, 0);
+        */
     }
 }

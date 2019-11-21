@@ -4,7 +4,7 @@
 #include "periph.h"
 
 bool modbus_init() {
-    if (eMBInit(MB_RTU, MODBUS_ADDRESS, 0, 9200, MB_PAR_NONE) != MB_ENOERR) {
+    if (eMBInit(MB_RTU, MODBUS_ADDRESS, 0, 9600, MB_PAR_NONE) != MB_ENOERR) {
         return false;
     }
 

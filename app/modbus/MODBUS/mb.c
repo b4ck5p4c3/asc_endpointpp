@@ -31,6 +31,7 @@
 #include <port.h>
 #include "stdlib.h"
 #include "string.h"
+#include <stdio.h>
 
 /* ----------------------- Platform includes --------------------------------*/
 #include "mb.h"
@@ -325,6 +326,8 @@ eMBDisable( void )
     return eStatus;
 }
 
+extern USHORT usRcvBufferPos;
+
 eMBErrorCode
 eMBPoll( void )
 {
@@ -355,8 +358,16 @@ eMBPoll( void )
 
         case EV_FRAME_RECEIVED:
             eStatus = peMBFrameReceiveCur( &ucRcvAddress, &ucMBFrame, &usLength );
+
             if( eStatus == MB_ENOERR )
             {
+                printf("get frame [addr:%d][status:%d][%d] ", ucRcvAddress, eStatus, usLength);
+
+                for(size_t i = 0; i < usLength; i++) {
+                    printf("0x%x ", ucMBFrame[i]);
+                }
+                printf("\n");
+            
                 /* Check if the frame is for us. If not ignore the frame. */
                 if( ( ucRcvAddress == ucMBAddress ) || ( ucRcvAddress == MB_ADDRESS_BROADCAST ) )
                 {

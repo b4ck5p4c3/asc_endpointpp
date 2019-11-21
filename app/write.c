@@ -48,6 +48,3 @@ size_t _write(int handle, const unsigned char * buffer, size_t size) {
 
     return (int)size;
 }
-
-
-// _STD_END

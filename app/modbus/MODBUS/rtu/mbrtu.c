@@ -71,7 +71,7 @@ volatile UCHAR  ucRTUBuf[MB_SER_PDU_SIZE_MAX];
 static volatile UCHAR *pucSndBufferCur;
 static volatile USHORT usSndBufferCount;
 
-static volatile USHORT usRcvBufferPos;
+volatile USHORT usRcvBufferPos;
 
 /* ----------------------- Start implementation -----------------------------*/
 eMBErrorCode
@@ -107,7 +107,7 @@ eMBRTUInit( UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eMBParity ePar
              * The reload for t3.5 is 1.5 times this value and similary
              * for t3.5.
              */
-            usTimerT35_50us = ( 7UL * 220000UL ) / ( 2UL * ulBaudRate );
+            usTimerT35_50us = ( 100UL * 220000UL ) / ( 2UL * ulBaudRate );
         }
         if( xMBPortTimersInit( ( USHORT ) usTimerT35_50us ) != TRUE )
         {

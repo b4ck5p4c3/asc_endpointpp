@@ -59,8 +59,6 @@ bool app_gpio_read(GpioPin gpio) {
     return (HAL_GPIO_ReadPin(gpio.port, gpio.pin) == GPIO_PIN_SET);
 }
 
-#define GPIO_SIZE 16
-
 IoLine BOARD_PINS[GPIO_SIZE + 1] = {
     // dummy IO0
     {.gpio = {.pin = 0, .port = (GPIO_TypeDef*)0}, .pull = {.pin = 0, .port = (GPIO_TypeDef*)0}},
@@ -87,21 +85,20 @@ IoLine BOARD_PINS[GPIO_SIZE + 1] = {
 };
 
 void set_coil(uint8_t index, uint8_t state) {
-    printf("set coil %d to %d\n", index, state);
-
     if(index < GPIO_SIZE) {
-        printf("set mode %d to %d\n", index + 1, state);
-        app_gpio_init(BOARD_PINS[index + 1].gpio, state == 1 ? GpioModeOutput : GpioModeInput);
+        printf("set mode %d to %d\n", index, state);
+        app_gpio_init(BOARD_PINS[index].gpio, state == 1 ? GpioModeOutput : GpioModeInput);
     }
 
     if(index >= GPIO_SIZE && index < GPIO_SIZE * 2) {
-        printf("write %d to %d\n", (index - GPIO_SIZE) + 1, state);
-        app_gpio_write(BOARD_PINS[(index - GPIO_SIZE) + 1].gpio, state == 1);
+        printf("write %d to %d\n", (index - GPIO_SIZE), state);
+        app_gpio_write(BOARD_PINS[(index - GPIO_SIZE)].gpio, state == 1);
     }
 
     if(index >= GPIO_SIZE * 2 && index < GPIO_SIZE * 3) {
-        printf("pull %d to %d\n", (index - GPIO_SIZE * 2) + 1, state);
-        app_gpio_write(BOARD_PINS[(index - GPIO_SIZE) + 1].pull, state == 1);
+        uint8_t pin = index - GPIO_SIZE * 2;
+        printf("pull %d to %d\n", pin, state);
+        app_gpio_write(BOARD_PINS[pin].pull, state == 1);
     }
 }
 
@@ -109,19 +106,23 @@ static bool lock_en[GPIO_SIZE] = {false};
 static bool lock_dis[GPIO_SIZE] = {false};
 
 uint8_t get_discrete(uint8_t index) {
-    if(index < GPIO_SIZE) {
-        lock_en[index] = app_gpio_read(BOARD_PINS[index + 1].gpio);
+    uint8_t res = 0;
 
-        return lock_en[index] ? 1 : 0;
+    if(index < GPIO_SIZE) {
+        lock_en[index] = app_gpio_read(BOARD_PINS[index].gpio);
+
+        res = lock_en[index] ? 1 : 0;
     }
 
     if(index >= GPIO_SIZE && index < GPIO_SIZE * 2) {
-        lock_dis[index - GPIO_SIZE] = app_gpio_read(BOARD_PINS[(index - GPIO_SIZE) + 1].gpio);
+        lock_dis[index - GPIO_SIZE] = app_gpio_read(BOARD_PINS[(index - GPIO_SIZE)].gpio);
 
-        return lock_dis[index - GPIO_SIZE] ? 1 : 0;
+        res = lock_dis[index - GPIO_SIZE] ? 1 : 0;
     }
 
-    return 0;
+    printf("get %d = %d\n", index, res);
+
+    return res;
 }
 
 void poll_inputs() {
@@ -141,6 +142,11 @@ extern uint8_t receive_buf[1];
 
 void app() {
     printf("=== Endpoint ASC B4CKSP4CE ===\n");
+
+    for(size_t i = 1; i < sizeof(BOARD_PINS)/sizeof(BOARD_PINS[0]); i++) {
+        app_gpio_init(BOARD_PINS[i].pull, GpioModeOutput);
+        app_gpio_write(BOARD_PINS[i].pull, false);
+    }
 
     // osThreadDef(ledTask, led_task, osPriorityNormal, 0, 128);
     // ledTaskHandle = osThreadCreate(osThread(ledTask), NULL);

@@ -1,8 +1,10 @@
 #ifndef REGISTERS_H_
 #define REGISTERS_H_
 
+#define GPIO_SIZE 16
+
 #define REG_COIL_START				0x000
-#define REG_COIL_NREGS				32
+#define REG_COIL_NREGS				GPIO_SIZE * 3
 
 #define REG_DISCRETE_START			0x100
 #define REG_DISCRETE_NREGS			10

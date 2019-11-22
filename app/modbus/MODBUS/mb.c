@@ -377,7 +377,7 @@ eMBPoll( void )
             break;
 
         case EV_EXECUTE:
-            printf("get execute message\n");
+            // printf("get execute message\n");
             ucFunctionCode = ucMBFrame[MB_PDU_FUNC_OFF];
             eException = MB_EX_ILLEGAL_FUNCTION;
             for( i = 0; i < MB_FUNC_HANDLERS_MAX; i++ )

@@ -1,6 +1,7 @@
 #include <mb.h>
 #include "registers.h"
 #include <string.h>
+#include <stdio.h>
 
 static unsigned short usRegCoilStart = REG_COIL_START;
 static unsigned char  usRegCoilBuf[REG_COIL_NREGS];
@@ -35,6 +36,8 @@ uint8_t get_discrete(uint8_t index);
 eMBErrorCode eMBRegCoilsCB(UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode ) {
     eMBErrorCode    eStatus = MB_ENOERR;
     int             iRegIndex;
+
+    printf("set coil %d\n", usAddress);
 
     if ((usAddress >= REG_COIL_START)
         && (usAddress + usNCoils <= REG_COIL_START + REG_COIL_NREGS))

@@ -28,6 +28,7 @@ mb.serial.timeout = 55
 if not mb.serial.is_open:
   mb.serial.open()
 
+'''
 GPIO_SIZE = 16
 
 MODE_BASE = 0
@@ -74,6 +75,7 @@ def test_inputs():
 
 test_inputs()
 '''
+
 while(1):
   data = mb.read_registers(REG_INPUT_START, REG_INPUT_SIZE, functioncode=MODBUS_READ_INPUT)
 
@@ -91,6 +93,3 @@ while(1):
   print('T: {0} degC, P: {1} hPa, H: {2} %%rH, G: {3} ohms'.format(temp, pres, humi, gas))
 
   time.sleep(0.08)
-'''
-
-

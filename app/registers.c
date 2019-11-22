@@ -44,18 +44,22 @@ eMBErrorCode eMBRegCoilsCB(UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoi
     {
         iRegIndex = (int)(usAddress - usRegCoilStart);
 
+        size_t shift = 0;
+
         while	(usNCoils > 0)
         {
+            // printf("coil %d [%02X]\n", shift, pucRegBuffer[shift / 8]);
         	if (eMode == MB_REG_READ) {
-        		*pucRegBuffer++ = (unsigned char)(usRegCoilBuf[iRegIndex]);
+        		pucRegBuffer[shift / 8] |= (unsigned char)(usRegCoilBuf[iRegIndex]) << (shift % 8);
         	} else {
-        		usRegCoilBuf[iRegIndex] = *pucRegBuffer++;
+        		usRegCoilBuf[iRegIndex] = (pucRegBuffer[shift / 8] & (1 << (shift % 8)) ? 1 : 0);
         	}
 
             set_coil(iRegIndex, usRegCoilBuf[iRegIndex]);
 
             iRegIndex++;
             usNCoils--;
+            shift++;
         }
     }
     else

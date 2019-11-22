@@ -86,7 +86,7 @@ IoLine BOARD_PINS[GPIO_SIZE + 1] = {
 
 void set_coil(uint8_t index, uint8_t state) {
     index -= 1;
-    printf("index %d\n", index);
+    // printf("index %d\n", index);
 
     if(index < GPIO_SIZE) {
         printf("set mode %d to %d\n", index, state);
@@ -121,7 +121,7 @@ uint8_t get_discrete(uint8_t index) {
 
     if(index >= GPIO_SIZE && index < GPIO_SIZE * 2) {
         res = lock_dis[index - GPIO_SIZE] ? 1 : 0;
-        
+
         lock_dis[index - GPIO_SIZE] = app_gpio_read(BOARD_PINS[(index - GPIO_SIZE) + 1].gpio);
     }
 

@@ -60,15 +60,19 @@ def test_inputs():
     mb.write_bit(PULL_BASE + pin, 1, functioncode=0x05)
 
   while(1):
-    for pin in xrange(0, 16):
-      print "%d%d" % (mb.read_bit(READ_EN_BASE + pin, functioncode=0x02), mb.read_bit(READ_DIS_BASE + pin, functioncode=0x02)), 
+    en = mb.read_bits(READ_EN_BASE, 16, functioncode=0x02)
+    dis = mb.read_bits(READ_DIS_BASE, 16, functioncode=0x02)
 
-    print
+    print zip(en, dis)
+    #for pin in xrange(0, 16):
+    #  print "%d%d" % (mb.read_bit(READ_EN_BASE + pin, functioncode=0x02), mb.read_bit(READ_DIS_BASE + pin, functioncode=0x02)), 
+
+    # print
     # mb.write_bits(WRITE_BASE, [1, 1, 1, 1, 1])
     
     time.sleep(0.25)
 
-test_outputs()
+test_inputs()
 '''
 while(1):
   data = mb.read_registers(REG_INPUT_START, REG_INPUT_SIZE, functioncode=MODBUS_READ_INPUT)

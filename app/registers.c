@@ -78,11 +78,16 @@ eMBErrorCode eMBRegDiscreteCB(UCHAR * pucRegBuffer, USHORT usAddress, USHORT usN
         && (usAddress + usNDiscrete <= REG_DISCRETE_START + REG_DISCRETE_NREGS))
     {
         iRegIndex = (int)(usAddress - usRegDiscreteStart);
+
+        size_t shift = 0;
+
         while	(usNDiscrete > 0)
         {
-            *pucRegBuffer++ = (unsigned char)get_discrete(iRegIndex);
+            pucRegBuffer[shift / 8] |= (unsigned char)get_discrete(iRegIndex) << (shift % 8);
+            
             iRegIndex++;
             usNDiscrete--;
+            shift++;
         }
     }
     else

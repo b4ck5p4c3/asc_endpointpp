@@ -373,6 +373,8 @@ eMBPoll( void )
                 {
                     ( void )xMBPortEventPost( EV_EXECUTE );
                 }
+            } else {
+                printf("err frame %d\n", eStatus);
             }
             break;
 
@@ -404,14 +406,16 @@ eMBPoll( void )
                     usLength = 0;
                     ucMBFrame[usLength++] = ( UCHAR )( ucFunctionCode | MB_FUNC_ERROR );
                     ucMBFrame[usLength++] = eException;
+
                 }
                 if( ( eMBCurrentMode == MB_ASCII ) && MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS )
                 {
                     vMBPortTimersDelay( MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS );
-                }                
+                }
+                // printf("sent\n");              
                 eStatus = peMBFrameSendCur( ucMBAddress, ucMBFrame, usLength );
             }
-            printf("sent\n");
+            // printf("end execute\n");
             break;
 
         case EV_FRAME_SENT:

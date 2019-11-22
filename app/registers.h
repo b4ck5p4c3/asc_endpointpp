@@ -4,10 +4,10 @@
 #define GPIO_SIZE 16
 
 #define REG_COIL_START				0x000
-#define REG_COIL_NREGS				GPIO_SIZE * 3
+#define REG_COIL_NREGS				(GPIO_SIZE * 4 + 0)
 
 #define REG_DISCRETE_START			0x100
-#define REG_DISCRETE_NREGS			10
+#define REG_DISCRETE_NREGS			(GPIO_SIZE * 2 + 1)
 
 #define REG_HOLDING_START			0x200
 #define REG_HOLDING_NREGS			10

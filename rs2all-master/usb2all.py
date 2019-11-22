@@ -34,24 +34,43 @@ MODE_BASE = 0
 WRITE_BASE = MODE_BASE + GPIO_SIZE
 PULL_BASE = WRITE_BASE + GPIO_SIZE
 
+READ_EN_BASE = 0x100
+READ_DIS_BASE = READ_EN_BASE + GPIO_SIZE
 # mb.write_bits(MODE_BASE, [1, 1, 1, 1, 1])
 
-for pin in xrange(0, 5):
-  mb.write_bit(MODE_BASE + pin, 1, functioncode=0x05)
+# mb.write_bit(PULL_BASE + 7, 1, functioncode=0x05)
 
-mb.write_bit(PULL_BASE + 7, 1, functioncode=0x05)
+def test_outputs():
+  for pin in xrange(0, 16):
+    mb.write_bit(MODE_BASE + pin, 1, functioncode=0x05)
 
-while(1):
-  for pin in xrange(0, 5):
-    mb.write_bit(WRITE_BASE + pin, 1, functioncode=0x05)
-  # mb.write_bits(WRITE_BASE, [1, 1, 1, 1, 1])
-  time.sleep(0.25)
+  while(1):
+    for pin in xrange(0, 16):
+      mb.write_bit(WRITE_BASE + pin, 1, functioncode=0x05)
+    # mb.write_bits(WRITE_BASE, [1, 1, 1, 1, 1])
+    time.sleep(0.25)
 
-  for pin in xrange(0, 5):
-    mb.write_bit(WRITE_BASE + pin, 0, functioncode=0x05)
-  # mb.write_bits(WRITE_BASE, [0, 0, 0, 0, 0])
-  
-  time.sleep(0.25)
+    for pin in xrange(0, 16):
+      mb.write_bit(WRITE_BASE + pin, 0, functioncode=0x05)
+    # mb.write_bits(WRITE_BASE, [0, 0, 0, 0, 0])
+    
+    time.sleep(0.25)
+
+def test_inputs():
+  for pin in xrange(0, 16):
+    mb.write_bit(MODE_BASE + pin, 0, functioncode=0x05)
+    mb.write_bit(PULL_BASE + pin, 1, functioncode=0x05)
+
+  while(1):
+    for pin in xrange(0, 16):
+      print "%d%d" % (mb.read_bit(READ_EN_BASE + pin, functioncode=0x02), mb.read_bit(READ_DIS_BASE + pin, functioncode=0x02)), 
+
+    print
+    # mb.write_bits(WRITE_BASE, [1, 1, 1, 1, 1])
+    
+    time.sleep(0.25)
+
+test_inputs()
 '''
 while(1):
   data = mb.read_registers(REG_INPUT_START, REG_INPUT_SIZE, functioncode=MODBUS_READ_INPUT)

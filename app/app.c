@@ -85,18 +85,21 @@ IoLine BOARD_PINS[GPIO_SIZE + 1] = {
 };
 
 void set_coil(uint8_t index, uint8_t state) {
+    index -= 1;
+    printf("index %d\n", index);
+
     if(index < GPIO_SIZE) {
         printf("set mode %d to %d\n", index, state);
-        app_gpio_init(BOARD_PINS[index].gpio, state == 1 ? GpioModeOutput : GpioModeInput);
+        app_gpio_init(BOARD_PINS[index + 1].gpio, state == 1 ? GpioModeOutput : GpioModeInput);
     }
 
     if(index >= GPIO_SIZE && index < GPIO_SIZE * 2) {
         printf("write %d to %d\n", (index - GPIO_SIZE), state);
-        app_gpio_write(BOARD_PINS[(index - GPIO_SIZE)].gpio, state == 1);
+        app_gpio_write(BOARD_PINS[(index - GPIO_SIZE) + 1].gpio, state == 1);
     }
 
     if(index >= GPIO_SIZE * 2 && index < GPIO_SIZE * 3) {
-        uint8_t pin = index - GPIO_SIZE * 2;
+        uint8_t pin = (index - GPIO_SIZE * 2) + 1;
         printf("pull %d to %d\n", pin, state);
         app_gpio_write(BOARD_PINS[pin].pull, state == 1);
     }
@@ -108,16 +111,18 @@ static bool lock_dis[GPIO_SIZE] = {false};
 uint8_t get_discrete(uint8_t index) {
     uint8_t res = 0;
 
-    if(index < GPIO_SIZE) {
-        lock_en[index] = app_gpio_read(BOARD_PINS[index].gpio);
+    index -= 1;
 
+    if(index < GPIO_SIZE) {
         res = lock_en[index] ? 1 : 0;
+
+        lock_en[index] = app_gpio_read(BOARD_PINS[index + 1].gpio);
     }
 
     if(index >= GPIO_SIZE && index < GPIO_SIZE * 2) {
-        lock_dis[index - GPIO_SIZE] = app_gpio_read(BOARD_PINS[(index - GPIO_SIZE)].gpio);
-
         res = lock_dis[index - GPIO_SIZE] ? 1 : 0;
+        
+        lock_dis[index - GPIO_SIZE] = app_gpio_read(BOARD_PINS[(index - GPIO_SIZE) + 1].gpio);
     }
 
     printf("get %d = %d\n", index, res);
@@ -128,8 +133,10 @@ uint8_t get_discrete(uint8_t index) {
 void poll_inputs() {
     for(size_t i = 0; i < GPIO_SIZE; i++) {
         if(app_gpio_read(BOARD_PINS[i + 1].gpio)) {
+            // printf("poll %d t\n", i + 1);
             lock_en[i] = true;
         } else {
+            // printf("poll %d f\n", i + 1);
             lock_dis[i] = false;
         }
     }

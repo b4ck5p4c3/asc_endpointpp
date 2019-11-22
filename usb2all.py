@@ -28,7 +28,6 @@ mb.serial.timeout = 55
 if not mb.serial.is_open:
   mb.serial.open()
 
-'''
 GPIO_SIZE = 16
 
 MODE_BASE = 0
@@ -74,22 +73,3 @@ def test_inputs():
     time.sleep(0.25)
 
 test_inputs()
-'''
-
-while(1):
-  data = mb.read_registers(REG_INPUT_START, REG_INPUT_SIZE, functioncode=MODBUS_READ_INPUT)
-
-  raw_temp = (data[REG_INPUT_TEMP_H] << 16) | data[REG_INPUT_TEMP_L]
-  raw_humi = (data[REG_INPUT_HUMI_H] << 16) | data[REG_INPUT_HUMI_L]
-  raw_pres = (data[REG_INPUT_PRES_H] << 16) | data[REG_INPUT_PRES_L]
-  raw_gas  = (data[REG_INPUT_GAS_H]  << 16) | data[REG_INPUT_GAS_L]
-
-  temp = raw_temp / 100.0
-  humi = raw_humi / 1000.0
-  pres = raw_pres / 100.0
-  gas = raw_gas
-
-  #print('T: {0}, P: {1}, H: {2}, G: {3}'.format(raw_temp, raw_pres, raw_humi, raw_gas))
-  print('T: {0} degC, P: {1} hPa, H: {2} %%rH, G: {3} ohms'.format(temp, pres, humi, gas))
-
-  time.sleep(0.08)

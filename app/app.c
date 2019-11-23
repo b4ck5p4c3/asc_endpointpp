@@ -103,6 +103,27 @@ void set_coil(uint8_t index, uint8_t state) {
         printf("pull %d to %d\n", pin, state);
         app_gpio_write(BOARD_PINS[pin].pull, state == 1);
     }
+
+    if(index == RELAY_1) {
+        HAL_GPIO_WritePin(
+            RELAY_C1_GPIO_Port, RELAY_C1_Pin,
+            state == 1 ? GPIO_PIN_SET : GPIO_PIN_RESET
+        );
+    }
+
+    if(index == RELAY_2) {
+        HAL_GPIO_WritePin(
+            RELAY_C2_GPIO_Port, RELAY_C2_Pin,
+            state == 1 ? GPIO_PIN_SET : GPIO_PIN_RESET
+        );
+    }
+
+    if(index == RELAY_2) {
+        HAL_GPIO_WritePin(
+            RELAY_C3_GPIO_Port, RELAY_C1_Pin,
+            state == 1 ? GPIO_PIN_SET : GPIO_PIN_RESET
+        );
+    }
 }
 
 static bool lock_en[GPIO_SIZE] = {false};

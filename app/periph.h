@@ -9,6 +9,6 @@
 #define MODBUS_DE_PIN				RS_DE_Pin
 #define MODBUS_DE_PORT				RS_DE_GPIO_Port
 
-#define MODBUS_ADDRESS				0xA
+#define MODBUS_ADDRESS				0xB
 
 #endif

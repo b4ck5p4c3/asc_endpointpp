@@ -6,6 +6,10 @@
 #define REG_COIL_START				0x000
 #define REG_COIL_NREGS				(GPIO_SIZE * 4 + 0)
 
+#define RELAY_1						GPIO_SIZE * 3 + 0
+#define RELAY_2						GPIO_SIZE * 3 + 1
+#define RELAY_3						GPIO_SIZE * 3 + 2
+
 #define REG_DISCRETE_START			0x100
 #define REG_DISCRETE_NREGS			(GPIO_SIZE * 2 + 1)
 

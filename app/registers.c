@@ -81,9 +81,14 @@ eMBErrorCode eMBRegDiscreteCB(UCHAR * pucRegBuffer, USHORT usAddress, USHORT usN
 
         size_t shift = 0;
 
+        for(size_t i = 0; i < usNDiscrete; i++) {
+            pucRegBuffer[i] = 0;
+        }
+
         while	(usNDiscrete > 0)
         {
             pucRegBuffer[shift / 8] |= (unsigned char)get_discrete(iRegIndex) << (shift % 8);
+            printf("[%d] <- %02X\n", shift / 8, pucRegBuffer[shift / 8]);
             
             iRegIndex++;
             usNDiscrete--;

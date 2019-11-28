@@ -118,9 +118,9 @@ void set_coil(uint8_t index, uint8_t state) {
         );
     }
 
-    if(index == RELAY_2) {
+    if(index == RELAY_3) {
         HAL_GPIO_WritePin(
-            RELAY_C3_GPIO_Port, RELAY_C1_Pin,
+            RELAY_C3_GPIO_Port, RELAY_C3_Pin,
             state == 1 ? GPIO_PIN_SET : GPIO_PIN_RESET
         );
     }

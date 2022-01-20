@@ -58,8 +58,16 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#if defined(REV_1_0)
 #define RS_DE_Pin GPIO_PIN_2
 #define RS_DE_GPIO_Port GPIOA
+#elif defined(REV_1_1)
+#define RS_DE_Pin GPIO_PIN_5
+#define RS_DE_GPIO_Port GPIOA
+#else
+#error "SPECIFY HW VERSION"
+#endif
+
 #define KEY_A2_Pin GPIO_PIN_6
 #define KEY_A2_GPIO_Port GPIOA
 #define LED_1_Pin GPIO_PIN_4

@@ -68,6 +68,7 @@ vMBPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable) {
 
     if (xTxEnable && !xRxEnable) {
         // __HAL_UART_DISABLE_IT(&huart1, RT_IT_RXNE);
+        // printf("set RE\n");
         HAL_GPIO_WritePin(MODBUS_DE_PORT, MODBUS_DE_PIN, GPIO_PIN_SET);
         // __HAL_UART_ENABLE_IT(&huart1, UART_IT_TXE);
     }
